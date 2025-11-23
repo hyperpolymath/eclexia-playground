@@ -1,0 +1,121 @@
+/* TEAM */
+
+Project: Eclexia - Economics-as-Code DSL
+Site: https://eclexia.dev
+Repository: https://github.com/Hyperpolymath/eclexia-playground
+License: MIT + Palimpsest v0.8 (Dual)
+
+/* LEAD MAINTAINER */
+Role: Project Lead & BDFN
+Responsibilities: Architecture, Language Design, Community
+Location: Global (Remote)
+
+/* CONTRIBUTORS */
+See: https://github.com/Hyperpolymath/eclexia-playground/graphs/contributors
+Thanks to all contributors who make this project possible!
+
+/* SITE */
+Language: English
+Doctype: HTML5
+IDE: VS Code, Deno
+Technologies: TypeScript, Deno, WASM (planned)
+Standards: RFC 9116 (security.txt), OpenGraph, Schema.org
+
+/* PROJECT INFO */
+Name: Eclexia Playground
+Description: Economics-as-Code domain-specific language for modeling economic systems
+Version: 0.1.0
+Status: Active Development
+Founded: 2025
+Open Source: Yes (MIT + Palimpsest v0.8)
+
+/* GOVERNANCE */
+Model: BDFN (Benevolent Dictator For Now)
+Contribution: TPCF Perimeter 3 (Open Contribution)
+Code of Conduct: CCCP (Compassionate Collaborative Culture Protocol)
+
+/* TECHNOLOGY STACK */
+Runtime: Deno 1.40.0+
+Language: TypeScript (Strict Mode)
+Testing: Deno Test Framework
+CI/CD: GitLab CI, GitHub Actions
+Deployment: Deno Deploy (planned)
+Package Manager: JSR (Deno registry)
+
+/* KEY FEATURES */
+- Complete lexer, parser, and interpreter
+- Economics-specific types (currency, quantity, time)
+- Agent-based modeling support
+- Market mechanism simulation
+- Policy modeling and analysis
+- Zero npm dependencies
+- Offline-first architecture
+
+/* STANDARDS & COMPLIANCE */
+RSR Level: Silver
+Security: RFC 9116 Compliant
+Accessibility: WCAG 2.1 AA (planned for web UI)
+Code Quality: TypeScript Strict Mode
+Testing: 80%+ coverage goal
+
+/* DEPENDENCIES */
+Core: Deno Standard Library (@std/*)
+Runtime: Zero npm dependencies
+Testing: @std/assert, @std/testing
+Future: JSR packages only
+
+/* COMMUNITY */
+Discussions: https://github.com/Hyperpolymath/eclexia-playground/discussions
+Issues: https://github.com/Hyperpolymath/eclexia-playground/issues
+Contributing: See CONTRIBUTING.md
+Code of Conduct: See CODE_OF_CONDUCT.md
+Security: See SECURITY.md
+
+/* CONTACT */
+General: hello@eclexia.dev
+Security: security@eclexia.dev
+Maintainers: maintainers@eclexia.dev
+Conduct: conduct@eclexia.dev
+
+/* ATTRIBUTION */
+Inspired by: Lisp, Python, TypeScript, Excel (for economics)
+Influenced by: Agent-based modeling, Econometric languages
+Educational: Built for teaching and learning economics
+
+/* RECOGNITION */
+Contributors: See CONTRIBUTORS.md
+Security Researchers: See SECURITY_HALL_OF_FAME.md
+Sponsors: See SPONSORS.md (when applicable)
+
+/* LICENSE */
+Code: MIT License
+Code: Palimpsest License v0.8
+Documentation: CC BY 4.0
+Examples: CC0 1.0 (Public Domain)
+
+/* THANKS */
+To all contributors, users, educators, and students who
+make economics more accessible through code.
+
+To the Deno team for creating an excellent runtime.
+
+To the open source community for inspiration and support.
+
+/* LAST UPDATED */
+Date: 2025-11-22
+Version: 1.0
+Format: humans.txt (http://humanstxt.org/)
+
+                    _           _
+     ___  ___ | | _____  _(_) __ _
+    / _ \/ __| |/ _ \ \/ / |/ _` |
+   |  __/ (__| |  __/>  <| | (_| |
+    \___|\___|_|\___/_/\_\_|\__,_|
+
+/* ASCII ART */
+    Economics as Code
+    Making economic modeling accessible through programming
+
+    "The best way to understand economics is to model it."
+
+/* EOF */

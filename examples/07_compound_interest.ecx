@@ -1,0 +1,35 @@
+// Compound Interest Calculator
+// Demonstrates time value of money with compounding
+
+const principal = 10000;
+const annualRate = 0.06;  // 6% annual interest
+const years = 20;
+
+// Different compounding frequencies
+const annually = compoundInterest(principal, annualRate, years, 1);
+const semiannually = compoundInterest(principal, annualRate, years, 2);
+const quarterly = compoundInterest(principal, annualRate, years, 4);
+const monthly = compoundInterest(principal, annualRate, years, 12);
+const daily = compoundInterest(principal, annualRate, years, 365);
+
+print("Compound Interest Comparison");
+print("Principal:", principal);
+print("Annual Rate:", annualRate * 100, "%");
+print("Time Period:", years, "years");
+print("");
+
+print("Final Amount by Compounding Frequency:");
+print("  Annually:", annually);
+print("  Semi-annually:", semiannually);
+print("  Quarterly:", quarterly);
+print("  Monthly:", monthly);
+print("  Daily:", daily);
+
+// Calculate differences
+const dailyVsAnnual = daily - annually;
+print("");
+print("Extra earned with daily vs. annual compounding:", dailyVsAnnual);
+
+// Calculate effective annual rate for daily compounding
+const effectiveRate = (daily / principal) ** (1 / years) - 1;
+print("Effective Annual Rate (daily compounding):", effectiveRate * 100, "%");

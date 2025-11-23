@@ -1,0 +1,30 @@
+// Net Present Value Analysis
+// Investment decision framework
+
+const projectName = "Solar Panel Installation";
+const initialInvestment = -50000;
+const yearlyRevenue = [15000, 20000, 25000, 30000, 35000];
+
+// Combine initial investment with cash flows
+const cashFlows = [initialInvestment];
+for revenue in yearlyRevenue {
+  cashFlows = cashFlows + [revenue];
+}
+
+const discountRate = 0.1;  // 10% hurdle rate
+const npv = npv(discountRate, cashFlows);
+
+print("NPV Analysis:", projectName);
+print("Initial Investment:", initialInvestment);
+print("Discount Rate:", discountRate * 100, "%");
+print("Net Present Value:", npv);
+
+if npv > 0 {
+  print("Decision: ACCEPT PROJECT ✓");
+} else {
+  print("Decision: REJECT PROJECT ✗");
+}
+
+// Calculate IRR
+const internalRate = irr(cashFlows);
+print("Internal Rate of Return:", internalRate * 100, "%");

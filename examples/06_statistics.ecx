@@ -1,0 +1,40 @@
+// Statistical Analysis of Economic Data
+// Descriptive statistics for economic datasets
+
+const salesData = [120, 145, 132, 156, 148, 139, 165, 142, 138, 151];
+
+print("Sales Data Analysis");
+print("Data:", salesData);
+print("");
+
+// Central tendency
+const average = mean(salesData);
+const middle = median(salesData);
+
+print("Central Tendency:");
+print("  Mean:", average);
+print("  Median:", middle);
+
+// Dispersion
+const variance = variance(salesData);
+const stdDev = stddev(salesData);
+const minimum = min(salesData);
+const maximum = max(salesData);
+const range = maximum - minimum;
+
+print("");
+print("Dispersion:");
+print("  Variance:", variance);
+print("  Standard Deviation:", stdDev);
+print("  Minimum:", minimum);
+print("  Maximum:", maximum);
+print("  Range:", range);
+
+// Coefficient of variation (relative variability)
+const cv = (stdDev / average) * 100;
+print("");
+print("Coefficient of Variation:", cv, "%");
+
+// Total
+const total = sum(salesData);
+print("Total Sales:", total);

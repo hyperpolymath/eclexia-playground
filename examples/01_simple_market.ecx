@@ -1,0 +1,38 @@
+// Simple Market Example
+// Demonstrates basic supply and demand
+
+// Define a good
+good Apple fungible {
+  quality: number = 1.0;
+}
+
+// Define consumer agent
+agent Consumer {
+  wealth: number;
+  utility: number;
+
+  behavior buy(price: currency, quantity: number) {
+    wealth = wealth - price * quantity;
+    utility = logarithmicUtility(wealth);
+  }
+}
+
+// Define producer agent
+agent Producer {
+  inventory: number;
+  revenue: currency;
+
+  behavior sell(price: currency, quantity: number) {
+    inventory = inventory - quantity;
+    revenue = revenue + price * quantity;
+  }
+}
+
+// Initialize market
+const initialPrice = 5USD;
+const consumer = Consumer { wealth: 1000, utility: 0 };
+const producer = Producer { inventory: 100, revenue: 0USD };
+
+print("Simple Market Simulation");
+print("Consumer wealth:", consumer.wealth);
+print("Producer inventory:", producer.inventory);

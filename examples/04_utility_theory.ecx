@@ -1,0 +1,38 @@
+// Utility Theory
+// Risk aversion and wealth preferences
+
+// Different utility functions for different risk profiles
+
+// Risk-neutral (linear utility)
+function linearUtility(wealth: number) -> number {
+  return wealth;
+}
+
+// Risk-averse (logarithmic utility)
+const wealth1 = 1000;
+const wealth2 = 10000;
+
+const utilityLogarithmic1 = logarithmicUtility(wealth1);
+const utilityLogarithmic2 = logarithmicUtility(wealth2);
+
+print("Utility Theory Comparison");
+print("");
+print("Wealth Level 1:", wealth1);
+print("  Linear utility:", linearUtility(wealth1));
+print("  Logarithmic utility:", utilityLogarithmic1);
+
+print("");
+print("Wealth Level 2:", wealth2);
+print("  Linear utility:", linearUtility(wealth2));
+print("  Logarithmic utility:", utilityLogarithmic2);
+
+// Power utility with different risk aversion coefficients
+const gamma_low = 0.5;   // Low risk aversion
+const gamma_high = 2.0;  // High risk aversion
+
+print("");
+print("Power Utility Functions:");
+for gamma in [gamma_low, 1.0, gamma_high] {
+  const u = powerUtility(wealth1, gamma);
+  print("  Gamma =", gamma, "-> Utility:", u);
+}

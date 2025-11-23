@@ -1,0 +1,41 @@
+// Portfolio Expected Return
+// Weighted average return calculation
+
+// Portfolio assets with weights and expected returns
+const stocks = { weight: 0.60, return: 0.10 };    // 60% in stocks, 10% expected return
+const bonds = { weight: 0.30, return: 0.05 };     // 30% in bonds, 5% expected return
+const cash = { weight: 0.10, return: 0.02 };      // 10% in cash, 2% expected return
+
+// Calculate weighted returns
+const stockReturn = stocks.weight * stocks.return;
+const bondReturn = bonds.weight * bonds.return;
+const cashReturn = cash.weight * cash.return;
+
+const portfolioReturn = stockReturn + bondReturn + cashReturn;
+
+print("Portfolio Analysis");
+print("");
+print("Asset Allocation:");
+print("  Stocks:", stocks.weight * 100, "%", "@ Expected", stocks.return * 100, "%");
+print("  Bonds:", bonds.weight * 100, "%", "@ Expected", bonds.return * 100, "%");
+print("  Cash:", cash.weight * 100, "%", "@ Expected", cash.return * 100, "%");
+print("");
+print("Expected Portfolio Return:", portfolioReturn * 100, "%");
+
+// Calculate for different scenarios
+print("");
+print("Scenario Analysis:");
+
+const bullMarket = { stocks: 0.15, bonds: 0.06, cash: 0.02 };
+const bearMarket = { stocks: -0.05, bonds: 0.04, cash: 0.02 };
+
+const bullReturn = stocks.weight * bullMarket.stocks +
+                   bonds.weight * bullMarket.bonds +
+                   cash.weight * bullMarket.cash;
+
+const bearReturn = stocks.weight * bearMarket.stocks +
+                   bonds.weight * bearMarket.bonds +
+                   cash.weight * bearMarket.cash;
+
+print("  Bull Market:", bullReturn * 100, "%");
+print("  Bear Market:", bearReturn * 100, "%");

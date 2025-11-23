@@ -1,0 +1,64 @@
+MIT License + Palimpsest v0.8 Dual Licensing
+
+Copyright (c) 2025 Eclexia Contributors
+
+===============================================================================
+PRIMARY LICENSE: MIT License
+===============================================================================
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+===============================================================================
+SUPPLEMENTARY LICENSE: Palimpsest v0.8
+===============================================================================
+
+This work is also available under the Palimpsest License v0.8, which permits
+reuse, modification, and redistribution under conditions that preserve:
+
+1. Attribution to original authors and contributors
+2. Preservation of this dual-licensing notice
+3. Documentation of substantial modifications
+4. Maintenance of educational and research accessibility
+
+The Palimpsest License encourages:
+- Academic and educational use
+- Open research and collaboration
+- Transparent development practices
+- Knowledge preservation and evolution
+
+For full Palimpsest License text, see: https://palimpsest.license/v0.8
+
+===============================================================================
+CHOOSING A LICENSE
+===============================================================================
+
+Users may choose to use this software under EITHER:
+- The MIT License (above), OR
+- The Palimpsest License v0.8
+
+You are not required to use both licenses; choose the one that best fits your
+use case and comply with its terms.
+
+===============================================================================
+CONTRIBUTOR AGREEMENT
+===============================================================================
+
+By contributing to this project, you agree to license your contributions under
+both the MIT License and the Palimpsest License v0.8, maintaining the dual
+licensing structure.
