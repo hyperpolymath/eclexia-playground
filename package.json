@@ -1,0 +1,18 @@
+{
+  "name": "@hyperpolymath/eclexia",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "res:build": "rescript",
+    "res:watch": "rescript build -w",
+    "res:clean": "rescript clean",
+    "dev": "deno run --allow-read --allow-write src/main.js",
+    "test": "deno test --allow-read --allow-write",
+    "repl": "deno run --allow-read src/repl.js",
+    "build": "npm run res:build",
+    "clean": "npm run res:clean && rm -rf lib/"
+  },
+  "devDependencies": {
+    "rescript": "^11.0.0"
+  }
+}
