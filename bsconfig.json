@@ -1,0 +1,22 @@
+{
+  "name": "@hyperpolymath/eclexia",
+  "version": "0.1.0",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "es6",
+      "in-source": true
+    }
+  ],
+  "suffix": ".js",
+  "bs-dependencies": [],
+  "warnings": {
+    "error": "+101+8"
+  },
+  "bsc-flags": ["-bs-no-version-header", "-bs-g"]
+}
