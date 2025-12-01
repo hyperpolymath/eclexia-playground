@@ -1,0 +1,6 @@
+// Boolean expressions
+const is_adult = true
+const has_license = false
+const can_drive = is_adult and has_license
+
+can_drive

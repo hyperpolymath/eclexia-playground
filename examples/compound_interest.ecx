@@ -1,0 +1,10 @@
+// Compound interest calculation
+const principal = 1000
+const rate = 0.05
+const years = 10
+
+// Calculate future value: FV = PV * (1 + r)^n
+const growth_factor = (1 + rate) ** years
+const future_value = principal * growth_factor
+
+future_value

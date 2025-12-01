@@ -9,11 +9,11 @@ let createEnv = (parent: option<environment>): environment => {
 }
 
 let defineVar = (env: environment, name: string, value: runtimeValue) => {
-  Array.push(env.variables, (name, value))
+  env.variables = Js.Array2.concat(env.variables, [(name, value)])
 }
 
 let rec getVar = (env: environment, name: string): result<runtimeValue, eclexiaError> => {
-  switch Array.find(env.variables, ((n, _)) => n == name) {
+  switch Js.Array2.find(env.variables, ((n, _)) => n == name) {
   | Some((_, value)) => Ok(value)
   | None =>
     switch env.parent {
@@ -24,12 +24,11 @@ let rec getVar = (env: environment, name: string): result<runtimeValue, eclexiaE
 }
 
 let rec setVar = (env: environment, name: string, value: runtimeValue): result<unit, eclexiaError> => {
-  switch Array.findIndex(env.variables, ((n, _)) => n == name) {
-  | Some(idx) => {
-      env.variables[idx] = (name, value)
-      Ok()
-    }
-  | None =>
+  let idx = Js.Array2.findIndex(env.variables, ((n, _)) => n == name)
+  if idx >= 0 {
+    env.variables[idx] = (name, value)
+    Ok()
+  } else {
     switch env.parent {
     | Some(parentEnv) => setVar(parentEnv, name, value)
     | None => Error(RuntimeError("Undefined variable: " ++ name, None))
@@ -51,15 +50,15 @@ let isTruthy = (value: runtimeValue): bool => {
 let valueToString = (value: runtimeValue): string => {
   switch value {
   | VNull => "null"
-  | VNumber(n) => Float.toString(n)
+  | VNumber(n) => Js.Float.toString(n)
   | VString(s) => s
   | VBool(true) => "true"
   | VBool(false) => "false"
   | VArray(_) => "[...]"
   | VObject(_) => "{...}"
   | VFunction(_) => "<function>"
-  | VCurrency(amount, currency) => Float.toString(amount) ++ currency
-  | VQuantity(amount, unit) => Float.toString(amount) ++ unit
+  | VCurrency(amount, currency) => Js.Float.toString(amount) ++ currency
+  | VQuantity(amount, unit) => Js.Float.toString(amount) ++ unit
   }
 }
 
@@ -127,7 +126,7 @@ let rec evalExpression = (env: environment, expr: expression): result<runtimeVal
         } else {
           switch evalExpression(env, elements[idx]) {
           | Ok(val) => {
-              Array.push(values, val)
+              let _ = Js.Array2.push(values, val)
               evalElements(idx + 1)
             }
           | Error(e) => Error(e)
@@ -149,7 +148,7 @@ let rec evalExpression = (env: environment, expr: expression): result<runtimeVal
           let (key, valExpr) = props[idx]
           switch evalExpression(env, valExpr) {
           | Ok(val) => {
-              Array.push(values, (key, val))
+              let _ = Js.Array2.push(values, (key, val))
               evalProps(idx + 1)
             }
           | Error(e) => Error(e)
@@ -193,7 +192,7 @@ let rec evalExpression = (env: environment, expr: expression): result<runtimeVal
           if current >= endVal {
             elements
           } else {
-            Array.push(elements, VNumber(current))
+            let _ = Js.Array2.push(elements, VNumber(current))
             buildRange(current +. 1.0)
           }
         }
@@ -306,11 +305,18 @@ and evalBlock = (env: environment, statements: array<statement>): result<runtime
   loop(0, VNull)
 }
 
+// Initialize standard library (moved here to avoid circular dependency)
+let initStdlib = (env: environment) => {
+  // Will be initialized manually for now
+  // TODO: Add stdlib functions
+  ()
+}
+
 let evalProgram = (program: program): result<runtimeValue, eclexiaError> => {
   let globalEnv = createEnv(None)
 
   // Initialize stdlib
-  Stdlib.initStdlib(globalEnv)
+  initStdlib(globalEnv)
 
   let rec evalDeclarations = (idx: int) => {
     if idx >= Array.length(program.declarations) {

@@ -1,13 +1,16 @@
 {
   "name": "@hyperpolymath/eclexia",
   "version": "0.1.0",
+  "description": "Economics-as-Code DSL - ReScript + Deno",
   "type": "module",
-  "scripts": {
-    "res:build": "rescript",
-    "res:watch": "rescript build -w",
-    "res:clean": "rescript clean"
-  },
-  "devDependencies": {
+  "dependencies": {
     "rescript": "^11.1.0"
+  },
+  "scripts": {
+    "build": "rescript build",
+    "clean": "rescript clean"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

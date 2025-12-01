@@ -14,16 +14,20 @@ let createParser = (tokens: array<token>): parserState => {
 }
 
 let peek = (parser: parserState): token => {
-  Array.get(parser.tokens, parser.current)->Option.getOr({
-    tokenType: EOF,
-    value: "",
-    literal: None,
-    span: {
-      start: {line: 0, column: 0, offset: 0},
-      end_: {line: 0, column: 0, offset: 0},
-      source: None,
-    },
-  })
+  if parser.current < Array.length(parser.tokens) {
+    parser.tokens[parser.current]
+  } else {
+    {
+      tokenType: EOF,
+      value: "",
+      literal: None,
+      span: {
+        start: {line: 0, column: 0, offset: 0},
+        end_: {line: 0, column: 0, offset: 0},
+        source: None,
+      },
+    }
+  }
 }
 
 let advance = (parser: parserState): token => {
@@ -38,7 +42,7 @@ let check = (parser: parserState, tokenType: tokenType): bool => {
 }
 
 let match_ = (parser: parserState, tokenTypes: array<tokenType>): bool => {
-  let matches = Array.some(tokenTypes, tt => check(parser, tt))
+  let matches = Js.Array2.some(tokenTypes, tt => check(parser, tt))
   if matches {
     let _ = advance(parser)
     true
@@ -107,8 +111,11 @@ and parsePrimary = (parser: parserState): result<expression, eclexiaError> => {
       let _ = advance(parser)
       let elements = []
 
-      if !check(parser, RBRACKET) {
-        // Parse array elements (simplified)
+      // TODO: Parse array elements
+      let _ = if !check(parser, RBRACKET) {
+        () // Parse array elements (simplified)
+      } else {
+        ()
       }
 
       switch consume(parser, RBRACKET, "Expected ']'") {
@@ -216,7 +223,7 @@ let parse = (tokens: array<token>): result<program, eclexiaError> => {
     } else {
       switch parseDeclaration(parser) {
       | Ok(decl) => {
-          Array.push(declarations, decl)
+          let _ = Js.Array2.push(declarations, decl)
           loop()
         }
       | Error(e) => Error(e)

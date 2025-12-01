@@ -1,220 +1,280 @@
-# Eclexia Playground - Just Task Runner
-# https://github.com/casey/just
+# Eclexia Playground - Pure ReScript + Deno + WASM
+# NO npm, NO bun, NO TypeScript, NO Node.js runtime!
 
-# List all available recipes
+# Configuration
+export RESCRIPT_PATH := "./tools/rescript/rescript"
+export DENO_DIR := "./.deno_cache"
+export WASM_DIR := "./wasm"
+
+# Default recipe - show all available commands
 default:
-    @just --list
+    @just --list --unsorted
 
 # ============================================================================
-# Development
+# Setup & Installation (NO npm!)
 # ============================================================================
 
-# Run in development mode with watch
-dev:
-    deno run --watch --allow-read --allow-write src/cli/main.ts
+# Complete project setup
+setup: install-rescript create-dirs
+    @echo "✓ Setup complete!"
+    @echo "Next: just build"
 
-# Start development REPL
-repl:
-    deno run --allow-read src/cli/repl.ts
+# Download standalone ReScript compiler (NO npm!)
+install-rescript:
+    @echo "Downloading standalone ReScript compiler..."
+    @mkdir -p tools
+    @if [ "$(uname)" = "Darwin" ]; then \
+        curl -L https://github.com/rescript-lang/rescript-compiler/releases/download/v11.1.0/rescript-darwin-v11.1.0.tar.gz | tar -xz -C tools/; \
+    elif [ "$(uname)" = "Linux" ]; then \
+        curl -L https://github.com/rescript-lang/rescript-compiler/releases/download/v11.1.0/rescript-linux-v11.1.0.tar.gz | tar -xz -C tools/; \
+    fi
+    @chmod +x tools/rescript/rescript
+    @echo "✓ ReScript compiler installed to ./tools/rescript/"
 
-# Start playground server
-playground:
-    deno run --allow-read --allow-net --allow-write playground/server.ts
+# Create necessary directories
+create-dirs:
+    @mkdir -p src examples wasm lib .deno_cache
 
-# ============================================================================
-# Testing
-# ============================================================================
-
-# Run all tests
-test:
-    deno test --allow-read --allow-write
-
-# Run tests in watch mode
-test-watch:
-    deno test --allow-read --allow-write --watch
-
-# Run tests with coverage
-test-coverage:
-    deno test --allow-read --allow-write --coverage=coverage
-    deno coverage coverage --lcov --output=coverage.lcov
-
-# Run specific test file
-test-file FILE:
-    deno test --allow-read --allow-write {{FILE}}
+# Clean downloaded tools
+clean-tools:
+    rm -rf tools/
 
 # ============================================================================
-# Quality Assurance
+# Building (ReScript → JavaScript)
 # ============================================================================
 
-# Run linter
-lint:
-    deno lint
+# Build all ReScript sources
+build:
+    @echo "Compiling ReScript → JavaScript..."
+    @if [ -f "{{RESCRIPT_PATH}}" ]; then \
+        {{RESCRIPT_PATH}} build; \
+    else \
+        echo "❌ ReScript compiler not found!"; \
+        echo "Run: just install-rescript"; \
+        exit 1; \
+    fi
+    @echo "✓ Build complete!"
 
-# Fix linting issues automatically
-lint-fix:
-    deno lint --fix
-
-# Format code
-fmt:
-    deno fmt
-
-# Check formatting without making changes
-fmt-check:
-    deno fmt --check
-
-# Type-check all TypeScript files
-check:
-    deno check src/**/*.ts
-
-# Run full CI pipeline locally
-ci: fmt-check lint check test
-
-# ============================================================================
-# Building
-# ============================================================================
-
-# Bundle for distribution
-bundle:
-    deno bundle src/mod.ts dist/eclexia.js
-
-# Compile CLI binary
-compile:
-    deno compile --allow-read --allow-write --output=bin/eclexia src/cli/main.ts
-
-# Build all artifacts
-build: bundle compile
+# Watch mode - rebuild on file changes
+watch:
+    @echo "Watching ReScript files..."
+    {{RESCRIPT_PATH}} build -w
 
 # Clean build artifacts
 clean:
-    rm -rf dist/ bin/ coverage/ *.lcov
+    @echo "Cleaning build artifacts..."
+    @{{RESCRIPT_PATH}} clean 2>/dev/null || true
+    @find src -name "*.js" -type f -delete 2>/dev/null || true
+    @rm -rf lib/ .deno_cache/
+    @echo "✓ Clean complete!"
+
+# Rebuild from scratch
+rebuild: clean build
+
+# Type-check without building
+check:
+    @echo "Type-checking ReScript sources..."
+    @{{RESCRIPT_PATH}} build -with-deps
 
 # ============================================================================
-# Documentation
+# Running (Pure Deno - NO Node.js!)
 # ============================================================================
 
-# Generate API documentation
-docs:
-    deno doc --html --name=Eclexia --output=docs/api src/mod.ts
+# Run development mode
+dev FILE: build
+    @echo "Running: {{FILE}}"
+    @deno run --allow-read src/Main.js {{FILE}}
 
-# Serve documentation locally
-docs-serve:
-    deno run --allow-net --allow-read https://deno.land/std/http/file_server.ts docs/
+# Run without rebuilding (faster)
+run FILE:
+    @deno run --allow-read src/Main.js {{FILE}}
 
-# Generate README badges
-badges:
-    @echo "Generating badges..."
-    @echo "See docs/badges.md for badge URLs"
+# Start interactive REPL
+repl: build
+    @deno run --allow-read src/Repl.js
 
 # ============================================================================
 # Examples
 # ============================================================================
 
 # Run all examples
-examples:
-    @echo "Running example programs..."
+examples: build
+    @echo "Running all examples..."
     @for file in examples/*.ecx; do \
-        echo "Running $$file..."; \
-        deno run --allow-read src/cli/main.ts "$$file"; \
+        echo "▶ $$file"; \
+        deno run --allow-read src/Main.js "$$file" || true; \
+        echo ""; \
     done
 
 # Run specific example
-example NAME:
-    deno run --allow-read src/cli/main.ts examples/{{NAME}}.ecx
+example NAME: build
+    @deno run --allow-read src/Main.js examples/{{NAME}}.ecx
 
 # ============================================================================
-# Benchmarking
+# Testing (Deno test framework)
 # ============================================================================
 
-# Run benchmarks
-bench:
-    deno bench --allow-read
+# Run all tests
+test: build
+    @deno test --allow-read --allow-write tests/
 
-# Run benchmarks and generate report
-bench-report:
-    deno bench --allow-read --json > benchmarks/results.json
+# Run tests in watch mode
+test-watch: build
+    @deno test --allow-read --allow-write --watch tests/
 
-# Compare benchmark results
-bench-compare BEFORE AFTER:
-    @echo "Comparing benchmarks: {{BEFORE}} vs {{AFTER}}"
-    deno run --allow-read scripts/compare-benchmarks.ts {{BEFORE}} {{AFTER}}
+# Run unit tests only
+test-unit: build
+    @deno test --allow-read tests/unit/
+
+# Run integration tests only
+test-integration: build
+    @deno test --allow-read tests/integration/
+
+# Run with coverage
+test-coverage: build
+    @deno test --allow-read --allow-write --coverage=coverage tests/
+    @deno coverage coverage --lcov --output=coverage.lcov
 
 # ============================================================================
-# Code Analysis
+# Code Quality
 # ============================================================================
 
-# Count lines of code
-loc:
-    @echo "Lines of Code:"
-    @find src -name "*.ts" | xargs wc -l | tail -1
+# Format ReScript code
+fmt:
+    @echo "Formatting ReScript code..."
+    @{{RESCRIPT_PATH}} format -all
+
+# Check formatting
+fmt-check:
+    @echo "Checking ReScript formatting..."
+    @{{RESCRIPT_PATH}} format -all -check
+
+# Run full CI pipeline
+ci: fmt-check check build test
+    @echo "✓ CI pipeline passed!"
+
+# ============================================================================
+# WASM Compilation
+# ============================================================================
+
+# Build WASM modules from Rust
+wasm-build:
+    @echo "Building WASM modules..."
+    @if [ -d "{{WASM_DIR}}" ]; then \
+        cd {{WASM_DIR}} && \
+        cargo build --target wasm32-unknown-unknown --release && \
+        cp target/wasm32-unknown-unknown/release/*.wasm ../lib/; \
+        echo "✓ WASM build complete!"; \
+    else \
+        echo "No WASM directory found. Skipping."; \
+    fi
+
+# Optimize WASM binaries
+wasm-optimize:
+    @echo "Optimizing WASM modules..."
+    @for wasm in lib/*.wasm; do \
+        if [ -f "$$wasm" ]; then \
+            wasm-opt -Oz "$$wasm" -o "$$wasm.opt" && \
+            mv "$$wasm.opt" "$$wasm"; \
+            echo "✓ Optimized: $$wasm"; \
+        fi \
+    done
+
+# Test WASM modules
+wasm-test:
+    @if [ -d "{{WASM_DIR}}" ]; then \
+        cd {{WASM_DIR}} && cargo test; \
+    fi
+
+# Clean WASM artifacts
+wasm-clean:
+    @if [ -d "{{WASM_DIR}}" ]; then \
+        cd {{WASM_DIR}} && cargo clean; \
+    fi
+    @rm -f lib/*.wasm
+
+# ============================================================================
+# Documentation
+# ============================================================================
+
+# Generate documentation
+docs:
+    @echo "Generating documentation..."
+    @mkdir -p docs/api
+    @deno doc --html --name=Eclexia src/Main.js > docs/api/index.html
+
+# Serve documentation
+docs-serve:
+    @deno run --allow-net --allow-read https://deno.land/std/http/file_server.ts docs/
+
+# ============================================================================
+# Project Information
+# ============================================================================
 
 # Show project statistics
 stats:
     @echo "=== Eclexia Project Statistics ==="
     @echo ""
-    @echo "Source Files:"
-    @find src -name "*.ts" | wc -l
+    @echo "ReScript Source Files:"
+    @find src -name "*.res" 2>/dev/null | wc -l
     @echo ""
-    @echo "Test Files:"
-    @find tests -name "*.ts" 2>/dev/null | wc -l || echo "0"
-    @echo ""
-    @echo "Total Lines (src):"
-    @find src -name "*.ts" | xargs wc -l | tail -1
+    @echo "Compiled JavaScript Files:"
+    @find src -name "*.js" 2>/dev/null | wc -l
     @echo ""
     @echo "Example Programs:"
-    @find examples -name "*.ecx" 2>/dev/null | wc -l || echo "0"
+    @find examples -name "*.ecx" 2>/dev/null | wc -l
+    @echo ""
+    @echo "WASM Modules:"
+    @find lib -name "*.wasm" 2>/dev/null | wc -l || echo "0"
+    @echo ""
+    @echo "ReScript Lines:"
+    @find src -name "*.res" -exec wc -l {} + 2>/dev/null | tail -1 || echo "0"
     @echo ""
     @echo "Documentation Files:"
-    @find . -maxdepth 1 -name "*.md" | wc -l
+    @find . -maxdepth 1 -name "*.md" -o -name "*.adoc" | wc -l
 
-# Check for TODO comments
-todos:
-    @echo "=== TODO Items ==="
-    @grep -rn "TODO" src/ tests/ || echo "No TODOs found!"
+# Count lines of code
+loc:
+    @echo "Lines of Code:"
+    @echo ""
+    @echo "ReScript:"
+    @find src -name "*.res" -exec wc -l {} + 2>/dev/null | tail -1 || echo "0"
+    @echo ""
+    @echo "JavaScript (compiled):"
+    @find src -name "*.js" -exec wc -l {} + 2>/dev/null | tail -1 || echo "0"
+    @echo ""
+    @echo "Rust (WASM):"
+    @find wasm -name "*.rs" -exec wc -l {} + 2>/dev/null | tail -1 || echo "0"
 
-# Check for FIXME comments
-fixmes:
-    @echo "=== FIXME Items ==="
-    @grep -rn "FIXME" src/ tests/ || echo "No FIXMEs found!"
+# Show environment info
+env-info:
+    @echo "=== Environment Information ==="
+    @echo "Deno: $$(deno --version | head -1)"
+    @echo "ReScript: $$({{RESCRIPT_PATH}} -version 2>/dev/null || echo 'Not installed')"
+    @echo "Just: $$(just --version)"
+    @echo "OS: $$(uname -s)"
+    @echo "Arch: $$(uname -m)"
+    @echo "PWD: $$(pwd)"
 
-# ============================================================================
-# Dependencies
-# ============================================================================
-
-# Show dependency tree
+# Show dependency info
 deps:
-    deno info src/mod.ts
-
-# Check for outdated dependencies
-deps-check:
-    @echo "Checking for outdated dependencies..."
-    @echo "Deno version: $(deno --version)"
-
-# Update dependencies
-deps-update:
-    @echo "Updating dependencies in deno.json..."
-    @echo "Manual update required - check JSR for latest versions"
-
-# ============================================================================
-# Git Helpers
-# ============================================================================
-
-# Create a new release branch
-release VERSION:
-    git checkout -b release/{{VERSION}}
-    @echo "Created release branch: release/{{VERSION}}"
-
-# Tag a release
-tag VERSION:
-    git tag -a v{{VERSION}} -m "Release v{{VERSION}}"
-    git push origin v{{VERSION}}
+    @echo "=== Dependencies ==="
+    @echo "✓ Deno (runtime)"
+    @echo "✓ ReScript (compiler)"
+    @echo "✓ WASM (optional, for performance)"
+    @echo ""
+    @echo "❌ NO npm"
+    @echo "❌ NO bun"
+    @echo "❌ NO TypeScript"
+    @echo "❌ NO Node.js"
 
 # ============================================================================
 # RSR Compliance
 # ============================================================================
 
-# Check RSR compliance
+# Check RSR Silver compliance
 rsr-check:
-    @echo "=== RSR Compliance Check ==="
+    @echo "=== RSR Silver Compliance Check ==="
     @echo ""
     @echo "Community Health Files:"
     @test -f LICENSE.txt && echo "✓ LICENSE.txt" || echo "✗ LICENSE.txt"
@@ -229,74 +289,86 @@ rsr-check:
     @test -f .well-known/ai.txt && echo "✓ ai.txt" || echo "✗ ai.txt"
     @test -f .well-known/humans.txt && echo "✓ humans.txt" || echo "✗ humans.txt"
     @echo ""
-    @echo "Build & CI:"
+    @echo "Build System:"
     @test -f justfile && echo "✓ justfile" || echo "✗ justfile"
-    @test -f .gitlab-ci.yml && echo "✓ .gitlab-ci.yml" || echo "✗ .gitlab-ci.yml"
+    @test -f bsconfig.json && echo "✓ bsconfig.json (ReScript)" || echo "✗ bsconfig.json"
     @echo ""
-    @echo "Framework:"
-    @test -f TPCF.md && echo "✓ TPCF.md" || echo "✗ TPCF.md"
-    @test -f RSR_AUDIT.md && echo "✓ RSR_AUDIT.md" || echo "✗ RSR_AUDIT.md"
+    @echo "Tech Stack:"
+    @echo "✓ ReScript (functional, type-safe)"
+    @echo "✓ Deno (pure runtime)"
+    @echo "✓ WASM (performance)"
+    @echo "❌ NO npm/TypeScript!"
 
-# Update RSR audit
+# Generate RSR audit report
 rsr-audit:
-    @echo "Updating RSR_AUDIT.md..."
-    @echo "Manual update required - document compliance status"
+    @echo "Generating RSR audit report..."
+    @echo "See RSR_AUDIT.md for compliance status"
 
 # ============================================================================
 # Utilities
 # ============================================================================
 
-# Install git hooks
-hooks-install:
-    @echo "Installing git hooks..."
-    @mkdir -p .git/hooks
-    @echo '#!/bin/sh\njust ci' > .git/hooks/pre-commit
-    @chmod +x .git/hooks/pre-commit
-    @echo "Pre-commit hook installed!"
+# Find TODO comments
+todos:
+    @echo "=== TODO Items ==="
+    @grep -rn "TODO" src/ 2>/dev/null || echo "No TODOs found!"
 
-# Remove git hooks
-hooks-remove:
-    rm -f .git/hooks/pre-commit
-    @echo "Git hooks removed"
+# Find FIXME comments
+fixmes:
+    @echo "=== FIXME Items ==="
+    @grep -rn "FIXME" src/ 2>/dev/null || echo "No FIXMEs found!"
 
-# Setup development environment
-setup:
-    @echo "Setting up development environment..."
-    @deno --version
-    @just hooks-install
-    @echo "Setup complete! Run 'just dev' to start developing"
-
-# Validate all configuration files
-validate-config:
-    @echo "Validating configuration files..."
-    @deno check deno.json 2>/dev/null && echo "✓ deno.json valid" || echo "✗ deno.json invalid"
-    @just --summary > /dev/null && echo "✓ justfile valid" || echo "✗ justfile invalid"
-
-# Show environment info
-env-info:
-    @echo "=== Environment Information ==="
-    @echo "Deno: $(deno --version | head -1)"
-    @echo "OS: $(uname -s)"
-    @echo "Arch: $(uname -m)"
-    @echo "PWD: $(pwd)"
-    @echo "Just: $(just --version)"
+# Search code
+search TERM:
+    @grep -rn "{{TERM}}" src/
 
 # ============================================================================
-# Help
+# Benchmarking
+# ============================================================================
+
+# Run benchmarks
+bench: build
+    @deno bench --allow-read benchmarks/
+
+# Compare benchmarks
+bench-compare BEFORE AFTER:
+    @echo "Comparing {{BEFORE}} vs {{AFTER}}"
+    @echo "Not implemented yet"
+
+# ============================================================================
+# Git & Release
+# ============================================================================
+
+# Create conventional commit
+commit MESSAGE:
+    @git add -A
+    @git commit -m "{{MESSAGE}}"
+
+# Create release
+release VERSION:
+    @echo "Creating release {{VERSION}}"
+    @git tag -a v{{VERSION}} -m "Release v{{VERSION}}"
+    @echo "Push with: git push --tags"
+
+# ============================================================================
+# Help & Documentation
 # ============================================================================
 
 # Show detailed help
 help:
-    @echo "Eclexia Playground - Task Runner"
+    @echo "Eclexia Playground - ReScript + Deno + WASM"
     @echo ""
-    @echo "Usage: just <task>"
+    @echo "See just-cookbook.adoc for comprehensive documentation"
     @echo ""
-    @echo "Run 'just' to see all available tasks"
-    @echo "Run 'just --help' for Just CLI help"
+    @echo "Quick start:"
+    @echo "  just setup     - Initial setup"
+    @echo "  just build     - Compile ReScript"
+    @echo "  just dev FILE  - Run a file"
+    @echo "  just repl      - Interactive REPL"
+    @echo "  just ci        - Full CI pipeline"
     @echo ""
-    @echo "Common workflows:"
-    @echo "  just dev          - Start development"
-    @echo "  just test         - Run tests"
-    @echo "  just ci           - Run full CI pipeline"
-    @echo "  just build        - Build all artifacts"
-    @echo "  just rsr-check    - Check RSR compliance"
+    @echo "Run 'just' to see all commands"
+
+# Show cookbook
+cookbook:
+    @less just-cookbook.adoc || cat just-cookbook.adoc

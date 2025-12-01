@@ -1,0 +1,8 @@
+// Simple mathematical expressions
+const x = 10
+const y = 20
+const sum = x + y
+const product = x * y
+const ratio = y / x
+
+sum

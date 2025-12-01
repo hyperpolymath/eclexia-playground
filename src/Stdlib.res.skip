@@ -15,15 +15,15 @@ let wrapNative = (fn: nativeFn): runtimeValue => {
 
 // Math functions
 let absImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VNumber(n)) => Ok(VNumber(Float.abs(n)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VNumber(n)) => Ok(VNumber(Float.abs(n)))
   | _ => Error(RuntimeError("abs() requires a number", None))
   }
 }
 
 let sqrtImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VNumber(n)) => Ok(VNumber(sqrt(n)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VNumber(n)) => Ok(VNumber(sqrt(n)))
   | _ => Error(RuntimeError("sqrt() requires a number", None))
   }
 }
@@ -36,30 +36,30 @@ let powImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> =>
 }
 
 let floorImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VNumber(n)) => Ok(VNumber(Float.floor(n)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VNumber(n)) => Ok(VNumber(Float.floor(n)))
   | _ => Error(RuntimeError("floor() requires a number", None))
   }
 }
 
 let ceilImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VNumber(n)) => Ok(VNumber(Float.ceil(n)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VNumber(n)) => Ok(VNumber(Float.ceil(n)))
   | _ => Error(RuntimeError("ceil() requires a number", None))
   }
 }
 
 let roundImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VNumber(n)) => Ok(VNumber(Float.round(n)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VNumber(n)) => Ok(VNumber(Float.round(n)))
   | _ => Error(RuntimeError("round() requires a number", None))
   }
 }
 
 // Array functions
 let sumImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VArray(elements)) => {
+  if Array.length(args) > 0 { switch args[0] {
+  | VArray(elements)) => {
       let total = ref(0.0)
       for i in 0 to Array.length(elements) - 1 {
         switch elements[i] {
@@ -74,8 +74,8 @@ let sumImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> =>
 }
 
 let meanImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VArray(elements)) => {
+  if Array.length(args) > 0 { switch args[0] {
+  | VArray(elements)) => {
       if Array.length(elements) == 0 {
         Error(RuntimeError("Cannot compute mean of empty array", None))
       } else {
@@ -86,7 +86,7 @@ let meanImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> =
           | _ => ()
           }
         }
-        Ok(VNumber(total.contents /. Int.toFloat(Array.length(elements))))
+        Ok(VNumber(total.contents /. Js.Int.toFloat(Array.length(elements))))
       }
     }
   | _ => Error(RuntimeError("mean() requires an array", None))
@@ -121,7 +121,7 @@ let npvImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> =>
       for i in 0 to Array.length(cashFlows) - 1 {
         switch cashFlows[i] {
         | VNumber(cf) => {
-            let discounted = cf /. ((1.0 +. rate) ** Int.toFloat(i + 1))
+            let discounted = cf /. ((1.0 +. rate) ** Js.Int.toFloat(i + 1))
             npv := npv.contents +. discounted
           }
         | _ => ()
@@ -134,8 +134,8 @@ let npvImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> =>
 }
 
 let logarithmicUtilityImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VNumber(wealth)) =>
+  if Array.length(args) > 0 { switch args[0] {
+  | VNumber(wealth)) =>
     if wealth <= 0.0 {
       Error(RuntimeError("Wealth must be positive for logarithmic utility", None))
     } else {
@@ -162,15 +162,15 @@ let priceElasticityImpl = (args: array<runtimeValue>): result<runtimeValue, ecle
 
 // String functions
 let toLowerCaseImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VString(s)) => Ok(VString(String.toLowerCase(s)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VString(s)) => Ok(VString(String.toLowerCase(s)))
   | _ => Error(RuntimeError("toLowerCase() requires a string", None))
   }
 }
 
 let toUpperCaseImpl = (args: array<runtimeValue>): result<runtimeValue, eclexiaError> => {
-  switch args[0] {
-  | Some(VString(s)) => Ok(VString(String.toUpperCase(s)))
+  if Array.length(args) > 0 { switch args[0] {
+  | VString(s)) => Ok(VString(String.toUpperCase(s)))
   | _ => Error(RuntimeError("toUpperCase() requires a string", None))
   }
 }

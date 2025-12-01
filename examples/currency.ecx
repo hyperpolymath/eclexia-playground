@@ -1,0 +1,7 @@
+// Currency calculations
+const price = 100USD
+const tax_rate = 0.08
+const tax = price * tax_rate
+const total = price + tax
+
+total

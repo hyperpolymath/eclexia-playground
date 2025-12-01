@@ -1,0 +1,632 @@
+# Eclexia Playground - Just Recipe Cookbook
+# Comprehensive guide to all build tasks
+
+:toc:
+:toclevels: 3
+
+## Overview
+
+Eclexia uses **NO npm, NO TypeScript** - only ReScript, Deno, and WASM.
+
+## Tech Stack
+
+* **ReScript** - Functional language (compiles to JS)
+* **Deno** - JavaScript runtime (NO Node.js!)
+* **WASM** - WebAssembly for performance-critical code
+* **Just** - Command runner (replaces npm scripts)
+
+## Architecture
+
+```
+┌─────────────────┐
+│ .res files      │  ReScript source
+│ (src/*.res)     │
+└────────┬────────┘
+         │
+         ↓ rescript compiler (standalone binary)
+┌─────────────────┐
+│ .js files       │  ES6 JavaScript
+│ (src/*.js)      │
+└────────┬────────┘
+         │
+         ↓ deno run (pure Deno runtime)
+┌─────────────────┐
+│ Execution       │
+└─────────────────┘
+```
+
+## Installation
+
+### Step 1: Install Deno
+
+```bash
+curl -fsSL https://deno.land/install.sh | sh
+```
+
+### Step 2: Install ReScript Compiler (Standalone)
+
+**Option A: Download Binary**
+```bash
+just install-rescript
+# Downloads standalone rescript binary to ./tools/rescript
+```
+
+**Option B: Manual Download**
+```bash
+# Linux
+wget https://github.com/rescript-lang/rescript-compiler/releases/download/v11.1.0/rescript-linux-v11.1.0.tar.gz
+tar -xzf rescript-linux-v11.1.0.tar.gz -C tools/
+
+# macOS
+wget https://github.com/rescript-lang/rescript-compiler/releases/download/v11.1.0/rescript-darwin-v11.1.0.tar.gz
+tar -xzf rescript-darwin-v11.1.0.tar.gz -C tools/
+```
+
+### Step 3: Install Just
+
+```bash
+# macOS
+brew install just
+
+# Linux
+curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
+# Or use cargo
+cargo install just
+```
+
+## Quick Start Recipes
+
+### Development Workflow
+
+```bash
+# Complete setup
+just setup
+
+# Build ReScript sources
+just build
+
+# Run in development mode
+just dev examples/present_value.ecx
+
+# Start REPL
+just repl
+
+# Watch mode (auto-rebuild)
+just watch
+```
+
+### Testing & Quality
+
+```bash
+# Run all tests
+just test
+
+# Format ReScript code
+just fmt
+
+# Check compilation
+just check
+
+# Full CI pipeline
+just ci
+```
+
+## Recipe Reference
+
+### Setup & Installation
+
+#### `just setup`
+Complete project setup - installs all dependencies.
+
+```bash
+just setup
+```
+
+Performs:
+- Downloads ReScript compiler binary
+- Verifies Deno installation
+- Creates necessary directories
+- Initializes configuration
+
+#### `just install-rescript`
+Downloads standalone ReScript compiler (NO npm needed!).
+
+```bash
+just install-rescript
+```
+
+Downloads architecture-specific binary to `./tools/rescript`.
+
+#### `just clean-tools`
+Removes downloaded tools.
+
+```bash
+just clean-tools
+```
+
+### Building
+
+#### `just build`
+Compiles all ReScript sources to JavaScript.
+
+```bash
+just build
+```
+
+Output: `src/*.js` files ready for Deno.
+
+#### `just watch`
+Watches ReScript files and rebuilds on changes.
+
+```bash
+just watch
+```
+
+Useful during development - keeps compiled JS in sync.
+
+#### `just clean`
+Removes all build artifacts.
+
+```bash
+just clean
+```
+
+Removes: compiled `.js` files, build cache, artifacts.
+
+#### `just rebuild`
+Clean + build from scratch.
+
+```bash
+just rebuild
+```
+
+### Running & Development
+
+#### `just dev FILE`
+Run an Eclexia program file.
+
+```bash
+just dev examples/present_value.ecx
+```
+
+Builds if needed, then executes on Deno.
+
+#### `just repl`
+Start interactive REPL.
+
+```bash
+just repl
+```
+
+#### `just run FILE`
+Run without rebuilding (faster).
+
+```bash
+just run examples/test.ecx
+```
+
+### Testing
+
+#### `just test`
+Run all tests.
+
+```bash
+just test
+```
+
+#### `just test-unit`
+Run unit tests only.
+
+```bash
+just test-unit
+```
+
+#### `just test-integration`
+Run integration tests only.
+
+```bash
+just test-integration
+```
+
+#### `just test-watch`
+Run tests in watch mode.
+
+```bash
+just test-watch
+```
+
+### Code Quality
+
+#### `just fmt`
+Format ReScript code.
+
+```bash
+just fmt
+```
+
+#### `just fmt-check`
+Check formatting without modifying files.
+
+```bash
+just fmt-check
+```
+
+#### `just check`
+Type-check ReScript sources.
+
+```bash
+just check
+```
+
+#### `just ci`
+Run full CI pipeline.
+
+```bash
+just ci
+```
+
+Performs: format check, type check, build, tests.
+
+### Examples
+
+#### `just examples`
+Run all example programs.
+
+```bash
+just examples
+```
+
+#### `just example NAME`
+Run specific example.
+
+```bash
+just example present_value
+```
+
+### Project Information
+
+#### `just stats`
+Show project statistics.
+
+```bash
+just stats
+```
+
+Displays: file counts, line counts, ReScript vs JS ratio.
+
+#### `just deps`
+Show dependency tree.
+
+```bash
+just deps
+```
+
+#### `just env-info`
+Display environment information.
+
+```bash
+just env-info
+```
+
+Shows: Deno version, ReScript version, OS info.
+
+### RSR Compliance
+
+#### `just rsr-check`
+Verify RSR Silver compliance.
+
+```bash
+just rsr-check
+```
+
+Checks all required governance files are present.
+
+#### `just rsr-audit`
+Generate compliance audit report.
+
+```bash
+just rsr-audit
+```
+
+### WASM Compilation
+
+#### `just wasm-build`
+Compile performance-critical code to WASM.
+
+```bash
+just wasm-build
+```
+
+Compiles Rust code in `wasm/` to WebAssembly.
+
+#### `just wasm-test`
+Test WASM modules.
+
+```bash
+just wasm-test
+```
+
+#### `just wasm-optimize`
+Optimize WASM binaries.
+
+```bash
+just wasm-optimize
+```
+
+Uses `wasm-opt` for size and speed optimizations.
+
+### Documentation
+
+#### `just docs`
+Generate documentation.
+
+```bash
+just docs
+```
+
+#### `just docs-serve`
+Serve documentation locally.
+
+```bash
+just docs-serve
+```
+
+Opens documentation at http://localhost:8000
+
+### Git & Release
+
+#### `just commit MESSAGE`
+Create conventional commit.
+
+```bash
+just commit "Add feature X"
+```
+
+#### `just release VERSION`
+Create release.
+
+```bash
+just release 0.2.0
+```
+
+Tags, updates changelog, prepares release.
+
+### Benchmarking
+
+#### `just bench`
+Run benchmarks.
+
+```bash
+just bench
+```
+
+#### `just bench-compare BEFORE AFTER`
+Compare benchmark results.
+
+```bash
+just bench-compare main feature-branch
+```
+
+### Utilities
+
+#### `just todos`
+Find TODO comments.
+
+```bash
+just todos
+```
+
+#### `just fixmes`
+Find FIXME comments.
+
+```bash
+just fixmes
+```
+
+#### `just loc`
+Count lines of code.
+
+```bash
+just loc
+```
+
+## Common Workflows
+
+### Starting Development
+
+```bash
+# First time setup
+just setup
+
+# Start watching for changes
+just watch
+
+# In another terminal
+just repl
+```
+
+### Before Committing
+
+```bash
+# Run full quality checks
+just ci
+
+# If all passes, commit
+git add -A
+git commit -m "feat: your changes"
+```
+
+### Creating a Release
+
+```bash
+# Run full test suite
+just ci
+
+# Create release
+just release 0.2.0
+
+# Push
+git push --tags
+```
+
+### Performance Optimization
+
+```bash
+# Build WASM modules
+just wasm-build
+
+# Run benchmarks
+just bench
+
+# Optimize WASM
+just wasm-optimize
+
+# Compare performance
+just bench-compare baseline optimized
+```
+
+## Environment Variables
+
+### RESCRIPT_PATH
+Path to ReScript compiler binary.
+
+```bash
+export RESCRIPT_PATH=./tools/rescript/rescript
+```
+
+### DENO_DIR
+Deno cache directory.
+
+```bash
+export DENO_DIR=./.deno_cache
+```
+
+### WASM_OPT_LEVEL
+WASM optimization level (0-3).
+
+```bash
+export WASM_OPT_LEVEL=3
+```
+
+## Troubleshooting
+
+### ReScript Compiler Not Found
+
+```bash
+# Download manually
+just install-rescript
+
+# Or specify path
+export RESCRIPT_PATH=/path/to/rescript
+```
+
+### Permission Denied
+
+```bash
+# Make tools executable
+chmod +x tools/rescript/rescript
+```
+
+### Build Failures
+
+```bash
+# Clean and rebuild
+just rebuild
+
+# Check ReScript syntax
+just check
+```
+
+### Deno Issues
+
+```bash
+# Clear Deno cache
+rm -rf .deno_cache
+
+# Verify Deno installation
+deno --version
+```
+
+## Advanced Recipes
+
+### Custom Compilation
+
+```bash
+# Compile specific module
+just build-module src/Parser.res
+
+# Compile with custom flags
+just build-custom "--verbose"
+```
+
+### Profiling
+
+```bash
+# Profile compilation
+just profile-build
+
+# Profile runtime
+just profile-run examples/large_model.ecx
+```
+
+### Cross-Platform Builds
+
+```bash
+# Build for Linux
+just build-linux
+
+# Build for macOS
+just build-macos
+
+# Build for Windows
+just build-windows
+```
+
+## Configuration Files
+
+### bsconfig.json
+ReScript compiler configuration.
+
+```json
+{
+  "name": "@hyperpolymath/eclexia",
+  "sources": [{"dir": "src", "subdirs": true}],
+  "package-specs": [{"module": "es6", "in-source": true}],
+  "suffix": ".js"
+}
+```
+
+### justfile
+All recipe definitions. See `justfile` for implementation details.
+
+## Best Practices
+
+### DO
+
+* Use `just build` before running
+* Run `just ci` before committing
+* Use `just watch` during development
+* Keep compiled `.js` files in git
+* Profile before optimizing
+
+### DON'T
+
+* Don't use npm or bun (ever!)
+* Don't write TypeScript
+* Don't modify `.js` files directly (edit `.res` instead)
+* Don't commit without running `just ci`
+
+## Contributing
+
+See link:CONTRIBUTING.md[CONTRIBUTING.md] for contribution guidelines.
+
+All development uses `just` recipes - no npm scripts!
+
+## License
+
+Dual-licensed: MIT + Palimpsest v0.8
+
+---
+
+**Pure ReScript + Deno + WASM - Zero npm, Zero TypeScript!**

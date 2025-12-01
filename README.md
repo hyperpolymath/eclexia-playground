@@ -1,31 +1,117 @@
 # Eclexia - Economics-as-Code DSL
 
-**ReScript + Deno** (NO TypeScript, NO Node.js runtime!)
+**ReScript + Deno + WASM** (NO TypeScript, NO Node.js runtime!)
 
 ## Tech Stack
 
-- **ReScript**: Compiles `.res` to `.js`  
-- **Deno**: Runs the `.js` (NO Node.js!)
-- **npm**: ONLY for ReScript compiler (or use standalone binary)
+- **ReScript**: Functional programming language that compiles to JavaScript
+- **Deno**: Pure JavaScript runtime (NO Node.js!)
+- **WASM**: WebAssembly for performance-critical operations
+- **Just**: Task runner (replaces npm scripts)
+- **npm**: ONLY for ReScript compiler and runtime libraries
 
-## Setup
+## Architecture
 
-```bash
-# Install ReScript compiler (one-time)
-npm install
-
-# Compile ReScript → JS
-npm run res:build
-
-# Run on Deno
-deno run --allow-read src/Main.js examples/test.ecx
+```
+┌─────────────────┐
+│ .res files      │  ReScript source
+│ (src/*.res)     │
+└────────┬────────┘
+         │
+         ↓ rescript compiler
+┌─────────────────┐
+│ .js files       │  ES6 JavaScript
+│ (src/*.js)      │
+└────────┬────────┘
+         │
+         ↓ deno run (pure Deno runtime)
+┌─────────────────┐
+│ Execution       │
+└─────────────────┘
 ```
 
-## Key Point
+## Quick Start
 
-✅ **Compilation**: ReScript (.res → .js)  
-✅ **Runtime**: Pure Deno (compiled .js files)  
-❌ **NO TypeScript**  
-❌ **NO Node.js runtime**
+### Prerequisites
 
-The compiled `.js` files are checked into git so users can run on Deno without compiling!
+```bash
+# Install Deno
+curl -fsSL https://deno.land/install.sh | sh
+
+# Install Just (task runner)
+# macOS
+brew install just
+
+# Linux
+curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+```
+
+### Build & Run
+
+```bash
+# Complete setup (downloads ReScript compiler)
+npm install
+
+# Build ReScript sources
+npx rescript build
+# OR use Just
+just build
+
+# Run an example
+deno run --allow-read src/main.js examples/simple_math.ecx
+
+# Start REPL
+deno run --allow-read src/repl.js
+```
+
+## Development
+
+See `justfile` for all available commands (50+ recipes!):
+
+```bash
+# Show all commands
+just --list
+
+# Build & watch
+just watch
+
+# Run examples
+just examples
+
+# Full CI pipeline
+just ci
+```
+
+Comprehensive documentation available in `just-cookbook.adoc`.
+
+## Key Points
+
+✅ **Compilation**: ReScript (.res → .js)
+✅ **Runtime**: Pure Deno (compiled .js files)
+✅ **Build**: Just task runner (or npm scripts)
+❌ **NO TypeScript**
+❌ **NO Node.js runtime** (Deno only!)
+❌ **NO npm at runtime** (only for build tools)
+
+## Examples
+
+- `examples/simple_math.ecx` - Basic arithmetic
+- `examples/currency.ecx` - Currency calculations
+- `examples/compound_interest.ecx` - Financial modeling
+- `examples/boolean_logic.ecx` - Logic operations
+
+## RSR Silver Compliance
+
+This project achieves **RSR Silver Level** compliance with:
+
+- ✅ Governance files (LICENSE, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, MAINTAINERS)
+- ✅ `.well-known/` directory (security.txt, ai.txt, humans.txt)
+- ✅ CHANGELOG.md (Keep a Changelog format)
+- ✅ Comprehensive build system (Just recipes)
+- ✅ Pure functional architecture (ReScript)
+
+## License
+
+Dual licensed: MIT + Palimpsest v0.8
+
+See `LICENSE.txt` for details.
