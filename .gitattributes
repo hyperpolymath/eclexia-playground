@@ -1,0 +1,44 @@
+# GitHub Linguist Configuration
+# Force correct language detection - ZERO TypeScript!
+
+# ReScript source files (primary language)
+*.res linguist-language=ReScript
+
+# Eclexia language files (custom DSL)
+*.ecx linguist-language=Text linguist-documentation=false
+
+# JavaScript files are compiled output from ReScript
+# Mark as generated so they don't count towards language stats
+src/*.js linguist-generated=true
+
+# Entry points are hand-written JavaScript (minimal glue code)
+src/main.js linguist-generated=false linguist-language=JavaScript
+src/repl.js linguist-generated=false linguist-language=JavaScript
+
+# Documentation files
+*.md linguist-documentation=true
+*.adoc linguist-documentation=true
+
+# Configuration files - don't count in language stats
+*.json linguist-vendored=true
+*.yml linguist-vendored=true
+*.yaml linguist-vendored=true
+justfile linguist-vendored=true
+bsconfig.json linguist-vendored=true
+
+# Explicitly exclude TypeScript (belt and suspenders approach)
+*.ts linguist-vendored=true linguist-detectable=false
+*.tsx linguist-vendored=true linguist-detectable=false
+
+# Vendor node_modules
+node_modules/** linguist-vendored=true
+
+# Well-known directory
+.well-known/** linguist-documentation=true
+
+# Build artifacts
+lib/** linguist-generated=true
+dist/** linguist-generated=true
+bin/** linguist-generated=true
+coverage/** linguist-generated=true
+public/** linguist-generated=true

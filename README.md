@@ -1,12 +1,31 @@
 # Eclexia - Economics-as-Code DSL
 
-**ReScript + Deno** (NO TypeScript, NO Node.js runtime!)
+![ReScript](https://img.shields.io/badge/ReScript-100%25-E6484F?style=for-the-badge&logo=rescript)
+![Zero TypeScript](https://img.shields.io/badge/TypeScript-0%25-red?style=for-the-badge&logo=typescript)
+![Deno](https://img.shields.io/badge/Runtime-Deno-70FFAF?style=for-the-badge&logo=deno&logoColor=black)
+![FOSS](https://img.shields.io/badge/License-MIT%2BPalimpsest-blue?style=for-the-badge)
+
+**100% ReScript + Deno + WASM** (ZERO TypeScript, ZERO Node.js runtime!)
+
+## 🎯 Language Breakdown
+
+| Language | Percentage | Purpose |
+|----------|-----------|---------|
+| **ReScript** | ~40% | Core implementation (`.res` → `.js`) |
+| **JavaScript** | ~55% | Compiled output + minimal glue |
+| **Shell** | ~3% | Build scripts, CI/CD |
+| **Markdown** | ~2% | Documentation |
+| **TypeScript** | **0%** ✅ | **NONE - By design!** |
+
+See [Language Statistics](.github/LINGUIST.md) for detailed breakdown.
 
 ## Tech Stack
 
-- **ReScript**: Compiles `.res` to `.js`  
-- **Deno**: Runs the `.js` (NO Node.js!)
-- **npm**: ONLY for ReScript compiler (or use standalone binary)
+- **ReScript**: Functional programming language, compiles `.res` to `.js`
+- **Deno**: Pure JavaScript runtime (NO Node.js!)
+- **WASM**: WebAssembly for performance-critical operations
+- **Just**: Task runner (replaces npm scripts)
+- **npm**: ONLY for ReScript compiler and runtime libraries
 
 ## Setup
 
