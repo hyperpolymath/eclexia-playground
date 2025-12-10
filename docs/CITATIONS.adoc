@@ -1,0 +1,36 @@
+= eclexia-playground - Citation Guide
+:toc:
+
+== BibTeX
+
+[source,bibtex]
+----
+@software{eclexia-playground_2025,
+  author = {Polymath, Hyper},
+  title = {eclexia-playground},
+  year = {2025},
+  url = {https://github.com/hyperpolymath/eclexia-playground},
+  license = {AGPL-3.0-or-later}
+}
+----
+
+== Harvard Style
+
+Polymath, H. (2025) _eclexia-playground_ [Computer software]. Available at: https://github.com/hyperpolymath/eclexia-playground
+
+== OSCOLA
+
+Hyper Polymath, 'eclexia-playground' (2025) <https://github.com/hyperpolymath/eclexia-playground>
+
+== MLA
+
+Polymath, Hyper. "eclexia-playground." 2025, github.com/hyperpolymath/eclexia-playground.
+
+== APA 7
+
+Polymath, H. (2025). _eclexia-playground_ [Computer software]. GitHub. https://github.com/hyperpolymath/eclexia-playground
+
+== See Also
+
+* link:../CITATION.cff[CITATION.cff]
+* link:../codemeta.json[codemeta.json]
