@@ -1,50 +1,76 @@
-= Eclexia - Economics-as-Code DSL
+= eclexia-playground
+Jonathan D.A. Jewell <jonathan.jewell@gmail.com>
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+:experimental:
+:url-github: https://github.com/hyperpolymath/eclexia-playground
+:url-gitlab: https://gitlab.com/hyperpolymath/eclexia-playground
+:url-bitbucket: https://bitbucket.org/hyperpolymath/eclexia-playground
+:url-codeberg: https://codeberg.org/hyperpolymath/eclexia-playground
 
-![ReScript](https://img.shields.io/badge/ReScript-100%25-E6484F?style=for-the-badge&logo=rescript)
-![Zero TypeScript](https://img.shields.io/badge/TypeScript-0%25-red?style=for-the-badge&logo=typescript)
-![Deno](https://img.shields.io/badge/Runtime-Deno-70FFAF?style=for-the-badge&logo=deno&logoColor=black)
-![FOSS](https://img.shields.io/badge/License-MIT%2BPalimpsest-blue?style=for-the-badge)
+Learning and experimentation sandbox environment
 
-*100% ReScript + Deno + WASM* (ZERO TypeScript, ZERO Node.js runtime!)
+image:https://img.shields.io/badge/RSR-Certified-gold[RSR Certified]
+image:https://img.shields.io/badge/License-AGPL%20v3-blue[License]
 
-== 🎯 Language Breakdown
+toc::[]
 
-| Language | Percentage | Purpose |
-|----------|-----------|---------|
-| *ReScript* | ~40% | Core implementation (`.res` → `.js`) |
-| *JavaScript* | ~55% | Compiled output + minimal glue |
-| *Shell* | ~3% | Build scripts, CI/CD |
-| *Markdown* | ~2% | Documentation |
-| *TypeScript* | *0%* ✅ | *NONE - By design!* |
+== Overview
 
-See [Language Statistics](.github/LINGUIST.md) for detailed breakdown.
+eclexia-playground is part of the link:https://rhodium.sh[Rhodium Standard] (RSR) ecosystem.
 
-== Tech Stack
+Domain: *software-development*
 
-- *ReScript*: Functional programming language, compiles `.res` to `.js`
-- *Deno*: Pure JavaScript runtime (NO Node.js!)
-- *WASM*: WebAssembly for performance-critical operations
-- *Just*: Task runner (replaces npm scripts)
-- *npm*: ONLY for ReScript compiler and runtime libraries
+== Installation
 
-== Setup
+[source,bash]
+----
+# Clone from GitHub (primary)
+git clone {url-github}
 
-```bash
-= Install ReScript compiler (one-time)
-npm install
+# Or from mirrors
+git clone {url-gitlab}
+git clone {url-codeberg}
+----
 
-= Compile ReScript → JS
-npm run res:build
+== RSR Stack
 
-= Run on Deno
-deno run --allow-read src/Main.js examples/test.ecx
-```
+This project follows RSR conventions:
 
-== Key Point
+* ✅ ReScript for frontend/logic
+* ✅ Deno for JS runtime
+* ✅ WASM for performance-critical code
+* ✅ Rust/OCaml/Haskell for systems/proofs
+* ✅ Guile/Scheme for configuration
+* ❌ No TypeScript
+* ❌ No Go
+* ❌ No npm
 
-✅ *Compilation*: ReScript (.res → .js)  
-✅ *Runtime*: Pure Deno (compiled .js files)  
-❌ *NO TypeScript*  
-❌ *NO Node.js runtime*
+== Mirrors
 
-The compiled `.js` files are checked into git so users can run on Deno without compiling!
+[cols="1,2"]
+|===
+| Platform | URL
+
+| GitHub (primary) | {url-github}
+| GitLab | {url-gitlab}
+| Bitbucket | {url-bitbucket}
+| Codeberg | {url-codeberg}
+|===
+
+== License
+
+Licensed under AGPL-3.0-or-later OR LicenseRef-Palimpsest-0.5.
+
+See link:LICENSE[LICENSE] for details.
+
+== Contributing
+
+See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc].
+
+== Metadata
+
+* Domain: software-development
+* Framework: RSR (Rhodium Standard Repository)
+* Dublin Core: link:.well-known/dc.xml[.well-known/dc.xml]
