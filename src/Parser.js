@@ -1,54 +1,48 @@
 
 
-import * as Caml_array from "rescript/lib/es6/caml_array.js";
+import * as Stdlib_Option from "@rescript/runtime/lib/es6/Stdlib_Option.js";
 
 function createParser(tokens) {
   return {
-          tokens: tokens,
-          current: 0
-        };
+    tokens: tokens,
+    current: 0
+  };
 }
 
 function peek(parser) {
-  if (parser.current < parser.tokens.length) {
-    return Caml_array.get(parser.tokens, parser.current);
-  } else {
-    return {
-            tokenType: "EOF",
-            value: "",
-            literal: undefined,
-            span: {
-              start: {
-                line: 0,
-                column: 0,
-                offset: 0
-              },
-              end_: {
-                line: 0,
-                column: 0,
-                offset: 0
-              },
-              source: undefined
-            }
-          };
-  }
+  return Stdlib_Option.getOr(parser.tokens[parser.current], {
+    tokenType: "EOF",
+    value: "",
+    literal: undefined,
+    span: {
+      start: {
+        line: 0,
+        column: 0,
+        offset: 0
+      },
+      end_: {
+        line: 0,
+        column: 0,
+        offset: 0
+      },
+      source: undefined
+    }
+  });
 }
 
 function advance(parser) {
-  var token = peek(parser);
+  let token = peek(parser);
   parser.current = parser.current + 1 | 0;
   return token;
 }
 
 function check(parser, tokenType) {
-  var token = peek(parser);
+  let token = peek(parser);
   return token.tokenType === tokenType;
 }
 
 function match_(parser, tokenTypes) {
-  var matches = tokenTypes.some(function (tt) {
-        return check(parser, tt);
-      });
+  let matches = tokenTypes.some(tt => check(parser, tt));
   if (matches) {
     advance(parser);
     return true;
@@ -60,390 +54,385 @@ function match_(parser, tokenTypes) {
 function consume(parser, tokenType, message) {
   if (check(parser, tokenType)) {
     return {
-            TAG: "Ok",
-            _0: advance(parser)
-          };
+      TAG: "Ok",
+      _0: advance(parser)
+    };
   } else {
     return {
-            TAG: "Error",
-            _0: {
-              TAG: "SyntaxError",
-              _0: message,
-              _1: undefined
-            }
-          };
+      TAG: "Error",
+      _0: {
+        TAG: "SyntaxError",
+        _0: message,
+        _1: undefined
+      }
+    };
   }
-}
-
-function parseBinary(parser) {
-  return parsePrimary(parser);
 }
 
 function parsePrimary(parser) {
-  var token = peek(parser);
-  var match = token.tokenType;
+  let token = peek(parser);
+  let match = token.tokenType;
   switch (match) {
     case "NUMBER" :
-        advance(parser);
-        var lit = token.literal;
-        if (lit !== undefined) {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "Literal",
-                    _0: lit,
-                    _1: token.span
-                  }
-                };
-        } else {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "Literal",
-                    _0: {
-                      TAG: "LitNumber",
-                      _0: 0.0
-                    },
-                    _1: token.span
-                  }
-                };
-        }
+      advance(parser);
+      let lit = token.literal;
+      if (lit !== undefined) {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "Literal",
+            _0: lit,
+            _1: token.span
+          }
+        };
+      } else {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "Literal",
+            _0: {
+              TAG: "LitNumber",
+              _0: 0.0
+            },
+            _1: token.span
+          }
+        };
+      }
     case "STRING" :
-        advance(parser);
-        var lit$1 = token.literal;
-        if (lit$1 !== undefined) {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "Literal",
-                    _0: lit$1,
-                    _1: token.span
-                  }
-                };
-        } else {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "Literal",
-                    _0: {
-                      TAG: "LitString",
-                      _0: ""
-                    },
-                    _1: token.span
-                  }
-                };
-        }
+      advance(parser);
+      let lit$1 = token.literal;
+      if (lit$1 !== undefined) {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "Literal",
+            _0: lit$1,
+            _1: token.span
+          }
+        };
+      } else {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "Literal",
+            _0: {
+              TAG: "LitString",
+              _0: ""
+            },
+            _1: token.span
+          }
+        };
+      }
     case "TRUE" :
     case "FALSE" :
-        break;
+      break;
     case "NULL" :
-        advance(parser);
-        return {
-                TAG: "Ok",
-                _0: {
-                  TAG: "Literal",
-                  _0: "LitNull",
-                  _1: token.span
-                }
-              };
+      advance(parser);
+      return {
+        TAG: "Ok",
+        _0: {
+          TAG: "Literal",
+          _0: "LitNull",
+          _1: token.span
+        }
+      };
     case "IDENTIFIER" :
-        advance(parser);
-        return {
-                TAG: "Ok",
-                _0: {
-                  TAG: "Identifier",
-                  _0: token.value,
-                  _1: token.span
-                }
-              };
+      advance(parser);
+      return {
+        TAG: "Ok",
+        _0: {
+          TAG: "Identifier",
+          _0: token.value,
+          _1: token.span
+        }
+      };
     case "LPAREN" :
-        advance(parser);
-        var expr = parseBinary(parser);
-        var e = consume(parser, "RPAREN", "Expected ')'");
-        if (e.TAG === "Ok") {
-          return expr;
-        } else {
-          return {
-                  TAG: "Error",
-                  _0: e._0
-                };
-        }
+      advance(parser);
+      let expr = parseBinary(parser);
+      let e = consume(parser, "RPAREN", "Expected ')'");
+      if (e.TAG === "Ok") {
+        return expr;
+      } else {
+        return {
+          TAG: "Error",
+          _0: e._0
+        };
+      }
     case "LBRACKET" :
-        advance(parser);
-        var elements = [];
-        !check(parser, "RBRACKET");
-        var e$1 = consume(parser, "RBRACKET", "Expected ']'");
-        if (e$1.TAG === "Ok") {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "ArrayExpr",
-                    _0: elements,
-                    _1: token.span
-                  }
-                };
-        } else {
-          return {
-                  TAG: "Error",
-                  _0: e$1._0
-                };
-        }
+      advance(parser);
+      let elements = [];
+      !check(parser, "RBRACKET");
+      let e$1 = consume(parser, "RBRACKET", "Expected ']'");
+      if (e$1.TAG === "Ok") {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "ArrayExpr",
+            _0: elements,
+            _1: token.span
+          }
+        };
+      } else {
+        return {
+          TAG: "Error",
+          _0: e$1._0
+        };
+      }
     case "CURRENCY_UNIT" :
-        advance(parser);
-        var lit$2 = token.literal;
-        if (lit$2 !== undefined) {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "Literal",
-                    _0: lit$2,
-                    _1: token.span
-                  }
-                };
-        } else {
-          return {
-                  TAG: "Ok",
-                  _0: {
-                    TAG: "Literal",
-                    _0: {
-                      TAG: "LitCurrency",
-                      _0: 0.0,
-                      _1: "USD"
-                    },
-                    _1: token.span
-                  }
-                };
-        }
+      advance(parser);
+      let lit$2 = token.literal;
+      if (lit$2 !== undefined) {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "Literal",
+            _0: lit$2,
+            _1: token.span
+          }
+        };
+      } else {
+        return {
+          TAG: "Ok",
+          _0: {
+            TAG: "Literal",
+            _0: {
+              TAG: "LitCurrency",
+              _0: 0.0,
+              _1: "USD"
+            },
+            _1: token.span
+          }
+        };
+      }
     default:
       return {
-              TAG: "Error",
-              _0: {
-                TAG: "SyntaxError",
-                _0: "Expected expression",
-                _1: token.span
-              }
-            };
+        TAG: "Error",
+        _0: {
+          TAG: "SyntaxError",
+          _0: "Expected expression",
+          _1: token.span
+        }
+      };
   }
   advance(parser);
-  var lit$3 = token.literal;
+  let lit$3 = token.literal;
   if (lit$3 !== undefined) {
     return {
-            TAG: "Ok",
-            _0: {
-              TAG: "Literal",
-              _0: lit$3,
-              _1: token.span
-            }
-          };
+      TAG: "Ok",
+      _0: {
+        TAG: "Literal",
+        _0: lit$3,
+        _1: token.span
+      }
+    };
   } else {
     return {
-            TAG: "Ok",
-            _0: {
-              TAG: "Literal",
-              _0: {
-                TAG: "LitBool",
-                _0: false
-              },
-              _1: token.span
-            }
-          };
+      TAG: "Ok",
+      _0: {
+        TAG: "Literal",
+        _0: {
+          TAG: "LitBool",
+          _0: false
+        },
+        _1: token.span
+      }
+    };
   }
 }
 
-function parseExpression(parser) {
-  return parsePrimary(parser);
-}
+let parseBinary = parsePrimary;
+
+let parseExpression = parsePrimary;
 
 function parseStatement(parser) {
   if (match_(parser, ["CONST"])) {
-    var nameToken = consume(parser, "IDENTIFIER", "Expected variable name");
+    let nameToken = consume(parser, "IDENTIFIER", "Expected variable name");
     if (nameToken.TAG !== "Ok") {
       return {
-              TAG: "Error",
-              _0: nameToken._0
-            };
+        TAG: "Error",
+        _0: nameToken._0
+      };
     }
-    var e = consume(parser, "ASSIGN", "Expected '='");
+    let e = consume(parser, "ASSIGN", "Expected '='");
     if (e.TAG !== "Ok") {
       return {
-              TAG: "Error",
-              _0: e._0
-            };
+        TAG: "Error",
+        _0: e._0
+      };
     }
-    var expr = parseBinary(parser);
+    let expr = parseBinary(parser);
     if (expr.TAG === "Ok") {
       return {
-              TAG: "Ok",
-              _0: {
-                TAG: "ConstDecl",
-                _0: nameToken._0.value,
-                _1: expr._0
-              }
-            };
+        TAG: "Ok",
+        _0: {
+          TAG: "ConstDecl",
+          _0: nameToken._0.value,
+          _1: expr._0
+        }
+      };
     } else {
       return {
-              TAG: "Error",
-              _0: expr._0
-            };
+        TAG: "Error",
+        _0: expr._0
+      };
     }
   }
   if (match_(parser, ["RETURN"])) {
-    var expr$1;
+    let expr$1;
     if (check(parser, "SEMICOLON") || check(parser, "RBRACE")) {
       expr$1 = undefined;
     } else {
-      var e$1 = parseBinary(parser);
+      let e$1 = parseBinary(parser);
       expr$1 = e$1.TAG === "Ok" ? e$1._0 : undefined;
     }
     return {
-            TAG: "Ok",
-            _0: {
-              TAG: "ReturnStmt",
-              _0: expr$1
-            }
-          };
+      TAG: "Ok",
+      _0: {
+        TAG: "ReturnStmt",
+        _0: expr$1
+      }
+    };
   }
-  var expr$2 = parseBinary(parser);
+  let expr$2 = parseBinary(parser);
   if (expr$2.TAG === "Ok") {
     return {
-            TAG: "Ok",
-            _0: {
-              TAG: "ExprStmt",
-              _0: expr$2._0
-            }
-          };
+      TAG: "Ok",
+      _0: {
+        TAG: "ExprStmt",
+        _0: expr$2._0
+      }
+    };
   } else {
     return {
-            TAG: "Error",
-            _0: expr$2._0
-          };
+      TAG: "Error",
+      _0: expr$2._0
+    };
   }
 }
 
 function parseDeclaration(parser) {
   if (match_(parser, ["FUNCTION"])) {
-    var nameToken = consume(parser, "IDENTIFIER", "Expected function name");
+    let nameToken = consume(parser, "IDENTIFIER", "Expected function name");
     if (nameToken.TAG !== "Ok") {
       return {
-              TAG: "Error",
-              _0: nameToken._0
-            };
+        TAG: "Error",
+        _0: nameToken._0
+      };
     }
-    var e = consume(parser, "LPAREN", "Expected '('");
+    let e = consume(parser, "LPAREN", "Expected '('");
     if (e.TAG !== "Ok") {
       return {
-              TAG: "Error",
-              _0: e._0
-            };
+        TAG: "Error",
+        _0: e._0
+      };
     }
-    var params = [];
-    var e$1 = consume(parser, "RPAREN", "Expected ')'");
+    let params = [];
+    let e$1 = consume(parser, "RPAREN", "Expected ')'");
     if (e$1.TAG !== "Ok") {
       return {
-              TAG: "Error",
-              _0: e$1._0
-            };
+        TAG: "Error",
+        _0: e$1._0
+      };
     }
-    var e$2 = consume(parser, "LBRACE", "Expected '{'");
+    let e$2 = consume(parser, "LBRACE", "Expected '{'");
     if (e$2.TAG !== "Ok") {
       return {
-              TAG: "Error",
-              _0: e$2._0
-            };
+        TAG: "Error",
+        _0: e$2._0
+      };
     }
-    var body = [];
-    var e$3 = consume(parser, "RBRACE", "Expected '}'");
+    let body = [];
+    let e$3 = consume(parser, "RBRACE", "Expected '}'");
     if (e$3.TAG === "Ok") {
       return {
-              TAG: "Ok",
-              _0: {
-                TAG: "Statement",
-                _0: {
-                  TAG: "FunctionDecl",
-                  name: nameToken._0.value,
-                  parameters: params,
-                  body: body
-                }
-              }
-            };
+        TAG: "Ok",
+        _0: {
+          TAG: "Statement",
+          _0: {
+            TAG: "FunctionDecl",
+            name: nameToken._0.value,
+            parameters: params,
+            body: body
+          }
+        }
+      };
     } else {
       return {
-              TAG: "Error",
-              _0: e$3._0
-            };
+        TAG: "Error",
+        _0: e$3._0
+      };
     }
   }
-  var stmt = parseStatement(parser);
+  let stmt = parseStatement(parser);
   if (stmt.TAG === "Ok") {
     return {
-            TAG: "Ok",
-            _0: {
-              TAG: "Statement",
-              _0: stmt._0
-            }
-          };
+      TAG: "Ok",
+      _0: {
+        TAG: "Statement",
+        _0: stmt._0
+      }
+    };
   } else {
     return {
-            TAG: "Error",
-            _0: stmt._0
-          };
+      TAG: "Error",
+      _0: stmt._0
+    };
   }
 }
 
 function parse(tokens) {
-  var parser = {
+  let parser = {
     tokens: tokens,
     current: 0
   };
-  var declarations = [];
-  var loop = function () {
-    while(true) {
+  let declarations = [];
+  let loop = () => {
+    while (true) {
       if (check(parser, "EOF")) {
         return {
-                TAG: "Ok",
-                _0: declarations
-              };
+          TAG: "Ok",
+          _0: declarations
+        };
       }
-      var decl = parseDeclaration(parser);
+      let decl = parseDeclaration(parser);
       if (decl.TAG !== "Ok") {
         return {
-                TAG: "Error",
-                _0: decl._0
-              };
+          TAG: "Error",
+          _0: decl._0
+        };
       }
       declarations.push(decl._0);
-      _param = undefined;
-      continue ;
+      continue;
     };
   };
-  var decls = loop();
+  let decls = loop();
   if (decls.TAG === "Ok") {
     return {
-            TAG: "Ok",
-            _0: {
-              declarations: decls._0
-            }
-          };
+      TAG: "Ok",
+      _0: {
+        declarations: decls._0
+      }
+    };
   } else {
     return {
-            TAG: "Error",
-            _0: decls._0
-          };
+      TAG: "Error",
+      _0: decls._0
+    };
   }
 }
 
 export {
-  createParser ,
-  peek ,
-  advance ,
-  check ,
-  match_ ,
-  consume ,
-  parseExpression ,
-  parseBinary ,
-  parsePrimary ,
-  parseStatement ,
-  parseDeclaration ,
-  parse ,
+  createParser,
+  peek,
+  advance,
+  check,
+  match_,
+  consume,
+  parseExpression,
+  parseBinary,
+  parsePrimary,
+  parseStatement,
+  parseDeclaration,
+  parse,
 }
 /* No side effect */

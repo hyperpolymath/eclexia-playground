@@ -109,6 +109,7 @@ and parsePrimary = (parser: parserState): result<expression, eclexiaError> => {
 
       if !check(parser, RBRACKET) {
         // Parse array elements (simplified)
+        ()
       }
 
       switch consume(parser, RBRACKET, "Expected ']'") {

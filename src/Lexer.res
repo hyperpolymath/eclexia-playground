@@ -2,13 +2,17 @@
 open Types
 
 let isDigit = (c: string) => {
-  let code = c->String.charCodeAt(0)->Int.fromFloat
-  code >= 48 && code <= 57 // '0' to '9'
+  switch c->String.charCodeAt(0) {
+  | Some(code) => code >= 48 && code <= 57 // '0' to '9'
+  | None => false
+  }
 }
 
 let isAlpha = (c: string) => {
-  let code = c->String.charCodeAt(0)->Int.fromFloat
-  (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || code == 95 // A-Z, a-z, _
+  switch c->String.charCodeAt(0) {
+  | Some(code) => (code >= 65 && code <= 90) || (code >= 97 && code <= 122) || code == 95 // A-Z, a-z, _
+  | None => false
+  }
 }
 
 let isAlphaNumeric = (c: string) => {

@@ -1,8 +1,12 @@
+# SPDX-License-Identifier: MIT OR AGPL-3.0-or-later
 # GitHub Actions CI/CD Pipeline for Eclexia
 # FOSS alternative - NO external monitoring services required
 # Replaces Datadog with Playwright for synthetics testing
 
 name: CI/CD
+
+# Security: Restrict default permissions
+permissions: read-all
 
 on:
   push:

@@ -24,12 +24,11 @@ let rec getVar = (env: environment, name: string): result<runtimeValue, eclexiaE
 }
 
 let rec setVar = (env: environment, name: string, value: runtimeValue): result<unit, eclexiaError> => {
-  switch Array.findIndex(env.variables, ((n, _)) => n == name) {
-  | Some(idx) => {
-      env.variables[idx] = (name, value)
-      Ok()
-    }
-  | None =>
+  let idx = Array.findIndex(env.variables, ((n, _)) => n == name)
+  if idx >= 0 {
+    env.variables[idx] = (name, value)
+    Ok()
+  } else {
     switch env.parent {
     | Some(parentEnv) => setVar(parentEnv, name, value)
     | None => Error(RuntimeError("Undefined variable: " ++ name, None))
@@ -92,7 +91,7 @@ let rec evalExpression = (env: environment, expr: expression): result<runtimeVal
           } else {
             Ok(VNumber(l /. r))
           }
-        | "%" => Ok(VNumber(mod_float(l, r)))
+        | "%" => Ok(VNumber(Float.mod(l, r)))
         | "**" => Ok(VNumber(l ** r))
         | "<" => Ok(VBool(l < r))
         | ">" => Ok(VBool(l > r))
@@ -125,12 +124,16 @@ let rec evalExpression = (env: environment, expr: expression): result<runtimeVal
         if idx >= Array.length(elements) {
           Ok(values)
         } else {
-          switch evalExpression(env, elements[idx]) {
-          | Ok(val) => {
-              Array.push(values, val)
-              evalElements(idx + 1)
+          switch elements[idx] {
+          | Some(elem) =>
+            switch evalExpression(env, elem) {
+            | Ok(val) => {
+                Array.push(values, val)
+                evalElements(idx + 1)
+              }
+            | Error(e) => Error(e)
             }
-          | Error(e) => Error(e)
+          | None => Error(RuntimeError("Internal error: invalid array index", None))
           }
         }
       }
@@ -146,13 +149,16 @@ let rec evalExpression = (env: environment, expr: expression): result<runtimeVal
         if idx >= Array.length(props) {
           Ok(values)
         } else {
-          let (key, valExpr) = props[idx]
-          switch evalExpression(env, valExpr) {
-          | Ok(val) => {
-              Array.push(values, (key, val))
-              evalProps(idx + 1)
+          switch props[idx] {
+          | Some((key, valExpr)) =>
+            switch evalExpression(env, valExpr) {
+            | Ok(val) => {
+                Array.push(values, (key, val))
+                evalProps(idx + 1)
+              }
+            | Error(e) => Error(e)
             }
-          | Error(e) => Error(e)
+          | None => Error(RuntimeError("Internal error: invalid property index", None))
           }
         }
       }
@@ -259,10 +265,14 @@ and evalStatement = (env: environment, stmt: statement): result<runtimeValue, ec
           if idx >= Array.length(elements) {
             Ok(VNull)
           } else {
-            defineVar(loopEnv, variable, elements[idx])
-            switch evalBlock(loopEnv, body) {
-            | Ok(_) => loop(idx + 1)
-            | Error(e) => Error(e)
+            switch elements[idx] {
+            | Some(elem) =>
+              defineVar(loopEnv, variable, elem)
+              switch evalBlock(loopEnv, body) {
+              | Ok(_) => loop(idx + 1)
+              | Error(e) => Error(e)
+              }
+            | None => Error(RuntimeError("Internal error: invalid loop index", None))
             }
           }
         }
@@ -297,9 +307,13 @@ and evalBlock = (env: environment, statements: array<statement>): result<runtime
     if idx >= Array.length(statements) {
       Ok(lastVal)
     } else {
-      switch evalStatement(env, statements[idx]) {
-      | Ok(val) => loop(idx + 1, val)
-      | Error(e) => Error(e)
+      switch statements[idx] {
+      | Some(stmt) =>
+        switch evalStatement(env, stmt) {
+        | Ok(val) => loop(idx + 1, val)
+        | Error(e) => Error(e)
+        }
+      | None => Error(RuntimeError("Internal error: invalid statement index", None))
       }
     }
   }
@@ -309,23 +323,26 @@ and evalBlock = (env: environment, statements: array<statement>): result<runtime
 let evalProgram = (program: program): result<runtimeValue, eclexiaError> => {
   let globalEnv = createEnv(None)
 
-  // Initialize stdlib
-  Stdlib.initStdlib(globalEnv)
+  // Note: Stdlib initialization moved to Api module to avoid circular dependency
 
   let rec evalDeclarations = (idx: int) => {
     if idx >= Array.length(program.declarations) {
       Ok(VNull)
     } else {
-      let decl = program.declarations[idx]
-      let result = switch decl {
-      | Statement(stmt) => evalStatement(globalEnv, stmt)
-      | AgentDecl(_) => Ok(VNull) // TODO: implement agents
-      | GoodDecl(_) => Ok(VNull) // TODO: implement goods
-      }
+      switch program.declarations[idx] {
+      | Some(decl) => {
+          let result = switch decl {
+          | Statement(stmt) => evalStatement(globalEnv, stmt)
+          | AgentDecl(_) => Ok(VNull) // TODO: implement agents
+          | GoodDecl(_) => Ok(VNull) // TODO: implement goods
+          }
 
-      switch result {
-      | Ok(_) => evalDeclarations(idx + 1)
-      | Error(e) => Error(e)
+          switch result {
+          | Ok(_) => evalDeclarations(idx + 1)
+          | Error(e) => Error(e)
+          }
+        }
+      | None => Error(RuntimeError("Internal error: invalid declaration index", None))
       }
     }
   }
