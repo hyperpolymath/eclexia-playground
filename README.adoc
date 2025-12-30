@@ -1,62 +1,148 @@
-= eclexia-playground
-
-image:https://img.shields.io/badge/license-AGPL--3.0-blue.svg[AGPL-3.0,link="https://www.gnu.org/licenses/agpl-3.0"] image:https://img.shields.io/badge/philosophy-Palimpsest-purple.svg[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-licence"]
-Jonathan D.A. Jewell <jonathan.jewell@gmail.com>
+= Eclexia Playground
 :toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
-:url-github: https://github.com/hyperpolymath/eclexia-playground
-:url-gitlab: https://gitlab.com/hyperpolymath/eclexia-playground
-:url-bitbucket: https://bitbucket.org/hyperpolymath/eclexia-playground
-:url-codeberg: https://codeberg.org/hyperpolymath/eclexia-playground
 
-Learning and experimentation sandbox environment
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-image:https://img.shields.io/badge/RSR-Certified-gold[RSR Certified,link=https://github.com/hyperpolymath/rhodium-standard-repositories]
-image:https://img.shields.io/badge/License-AGPL%20v3-blue[License]
+image:https://img.shields.io/badge/Language-Eclexia-green[Eclexia]
+image:https://img.shields.io/badge/Implementation-Zig%20%2B%20V-blue[Zig + V]
+image:https://img.shields.io/badge/License-AGPL--3.0-blue[License]
+image:https://img.shields.io/badge/RSR-Certified-gold[RSR]
+
+*Playground for Eclexia - Sustainable Computing Language*
 
 toc::[]
 
 == Overview
-Domain: *software-development*
 
-== Installation
+Eclexia is a programming language designed for sustainable computing - minimizing energy consumption, maximizing hardware longevity, and reducing environmental impact.
+
+=== Implementation
+
+Eclexia is implemented in **Zig** and **V** (NOT Ada/SPARK):
+
+* **Zig**: Compiler backend, memory management, low-level runtime
+* **V**: Frontend, type checker, high-level runtime
+
+=== Key Features
+
+* **Energy-Aware Compilation**: Optimize for power consumption
+* **Hardware Longevity**: Reduce wear on storage/memory
+* **Carbon Footprint Tracking**: Built-in sustainability metrics
+* **Graceful Degradation**: Adapt to resource constraints
+* **Right-to-Repair**: Self-diagnostic and self-healing code
+
+== Language Design
+
+=== Energy Annotations
+
+[source,eclexia]
+----
+-- Specify energy budget for operations
+@energy_budget(100mJ)
+fn process_batch(data: [Record]) -> [Result]:
+    -- Compiler ensures operation fits budget
+    data.map(|r| transform(r))
+
+-- Low-power mode variants
+@low_power
+fn background_task() -> ():
+    -- Uses energy-efficient algorithms
+----
+
+=== Sustainability Metrics
+
+[source,eclexia]
+----
+-- Track carbon footprint
+fn main() -> ():
+    @track_carbon
+    let result = compute_intensive_task()
+
+    print("Carbon: ", carbon_footprint())
+    print("Energy: ", energy_consumed())
+----
+
+=== Hardware Awareness
+
+[source,eclexia]
+----
+-- Minimize write cycles (SSD/flash longevity)
+@minimize_writes
+fn log_event(event: Event) -> ():
+    buffer_write(event)  -- Batch writes
+
+-- Thermal awareness
+@thermal_limit(70C)
+fn heavy_computation() -> Result:
+    -- Throttles if too hot
+----
+
+== Zig Backend
+
+[source,zig]
+----
+// src/compiler/backend.zig
+const std = @import("std");
+
+pub const EnergyOptimizer = struct {
+    budget_mj: u64,
+    current_usage: u64,
+
+    pub fn optimize(self: *EnergyOptimizer, ir: *IR) !void {
+        try self.selectEfficientOps(ir);
+        try self.minimizeMemoryAccess(ir);
+    }
+};
+----
+
+== V Frontend
+
+[source,v]
+----
+// src/frontend/parser.v
+module parser
+
+struct EclexiaParser {
+    tokens []Token
+    pos    int
+}
+
+fn (mut p EclexiaParser) parse_energy_annotation() ?EnergyBudget {
+    if p.current().kind == .at {
+        return p.parse_annotation()
+    }
+    return none
+}
+----
+
+== Getting Started
 
 [source,bash]
 ----
-# Clone from GitHub (primary)
-git clone {url-github}
+# Install
+guix install eclexia
 
-# Or from mirrors
-git clone {url-gitlab}
-git clone {url-codeberg}
+# Or build from source
+git clone https://github.com/hyperpolymath/eclexia
+cd eclexia/backend && zig build
+cd eclexia/frontend && v .
 ----
 
-== Mirrors
+== Examples
 
-[cols="1,2"]
-|===
-| Platform | URL
+* `examples/energy-aware/` - Energy-optimized algorithms
+* `examples/hardware-friendly/` - Hardware longevity patterns
+* `examples/carbon-tracking/` - Carbon footprint monitoring
 
-| GitHub (primary) | {url-github}
-| GitLab | {url-gitlab}
-| Bitbucket | {url-bitbucket}
-| Codeberg | {url-codeberg}
-|===
+== Philosophy
+
+* Compute only what's needed
+* Preserve hardware lifespan
+* Measure environmental impact
+* Degrade gracefully under constraints
 
 == License
 
-Licensed under AGPL-3.0-or-later OR LicenseRef-Palimpsest-0.5.
-
-See link:LICENSE[LICENSE] for details.
-
-== Contributing
-
-See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc].
-
-== Metadata
-
-* Domain: software-development
-* Framework: RSR (Rhodium Standard Repository)
-* Dublin Core: link:.well-known/dc.xml[.well-known/dc.xml]
+SPDX-License-Identifier: AGPL-3.0-or-later
