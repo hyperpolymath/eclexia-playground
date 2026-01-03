@@ -1,4 +1,8 @@
 = Eclexia Playground
+
+image:https://img.shields.io/badge/License-MPL_2.0-blue.svg[MPL-2.0,link="https://opensource.org/licenses/MPL-2.0"]
+image:https://img.shields.io/badge/Philosophy-Palimpsest-purple.svg[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-licence"]
+
 :toc: macro
 :icons: font
 :source-highlighter: rouge
@@ -7,7 +11,6 @@
 
 image:https://img.shields.io/badge/Language-Eclexia-green[Eclexia]
 image:https://img.shields.io/badge/Implementation-Zig%20%2B%20V-blue[Zig + V]
-image:https://img.shields.io/badge/License-AGPL--3.0-blue[License]
 image:https://img.shields.io/badge/RSR-Certified-gold[RSR]
 
 *Playground for Eclexia - Sustainable Computing Language*

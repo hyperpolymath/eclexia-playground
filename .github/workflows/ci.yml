@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 # GitHub Actions CI/CD Pipeline for Eclexia
 # FOSS alternative - NO external monitoring services required
 # Replaces Datadog with Playwright for synthetics testing
